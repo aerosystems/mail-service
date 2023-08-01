@@ -2,16 +2,18 @@ package RPCServer
 
 import (
 	"fmt"
-	"log"
+	"github.com/aerosystems/mail-service/pkg/logger"
 	"net"
 	"net/rpc"
+	"os"
 )
 
-const rpcPort = "5001"
+const rpcPort = 5001
 
 func Listen() error {
-	log.Printf("starting RPC server on 0.0.0.0:%s", rpcPort)
-	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%s", rpcPort))
+	log := logger.NewLogger(os.Getenv("HOSTNAME"))
+	log.Info("starting RPC server on 0.0.0.0:%d", rpcPort)
+	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", rpcPort))
 	if err != nil {
 		return err
 	}

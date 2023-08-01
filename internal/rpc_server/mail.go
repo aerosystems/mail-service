@@ -1,9 +1,9 @@
 package RPCServer
 
 import (
+	"github.com/aerosystems/lookup-service/pkg/logger"
 	"github.com/aerosystems/mail-service/internal/provider"
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
-	"log"
 	"os"
 	"strconv"
 )
@@ -17,7 +17,8 @@ type MailPayload struct {
 }
 
 func (r *MailServer) SendEmail(payload MailPayload, resp *string) error {
-	log.Println("sending email to", payload.To)
+	log := logger.NewLogger(os.Getenv("HOSTNAME"))
+	log.Info("sending email to", payload.To)
 	mailService := &MailService.MailService{}
 	msg := MailService.Message{
 		To:       payload.To,
@@ -46,9 +47,11 @@ func (r *MailServer) SendEmail(payload MailPayload, resp *string) error {
 	case "postfix":
 		mailService.SetProvider(&provider.SMTP{})
 	default:
-		log.Fatal("No email provider set")
+		log.Fatal("no email provider set")
 	}
+	log.Infof("sending email with %s provider", os.Getenv("EMAIL_PROVIDER"))
 	if err := mailService.SendEmail(msg); err != nil {
+		log.Errorf("error sending email: %v", err)
 		return err
 	}
 
