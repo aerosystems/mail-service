@@ -1,0 +1,75 @@
+basePath: /
+definitions:
+  WebServer.ErrResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  WebServer.FeedbackRequest:
+    properties:
+      email:
+        type: string
+      message:
+        type: string
+      name:
+        type: string
+    type: object
+  WebServer.Response:
+    properties:
+      data: {}
+      message:
+        type: string
+    type: object
+host: gw.verifire.com/mail
+info:
+  contact:
+    name: Artem Kostenko
+    url: https://github.com/aerosystems
+  description: A part of microservice infrastructure, who responsible for sending
+    emails
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  title: Mail Service
+  version: 1.0.1
+paths:
+  /v1/feedback:
+    post:
+      consumes:
+      - application/json
+      description: Send feedback
+      parameters:
+      - description: feedback request
+        in: body
+        name: feedbackRequest
+        required: true
+        schema:
+          $ref: '#/definitions/WebServer.FeedbackRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/WebServer.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/WebServer.ErrResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/WebServer.ErrResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/WebServer.ErrResponse'
+      summary: Send feedback
+      tags:
+      - feedback
+schemes:
+- https
+swagger: "2.0"

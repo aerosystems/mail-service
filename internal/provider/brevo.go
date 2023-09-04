@@ -3,6 +3,7 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
+	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
 	"net/http"
 	"os"
 )
@@ -21,20 +22,20 @@ type BrevoMailPerson struct {
 	Email string `json:"email"`
 }
 
-func (b *Brevo) SendEmail(to, subject, body string) error {
+func (b *Brevo) SendEmail(msg MailService.Message) error {
 	requestPayload := &BrevoRequestPayload{
 		Sender: BrevoMailPerson{
-			Name:  "Testmail💎",
-			Email: "no-reply@testmail.top",
+			Name:  msg.FromName,
+			Email: msg.From,
 		},
 		To: []BrevoMailPerson{
 			{
-				Name:  "Customer",
-				Email: to,
+				Name:  msg.ToName,
+				Email: msg.To,
 			},
 		},
-		Subject:     subject,
-		HTMLContent: body,
+		Subject:     msg.Subject,
+		HTMLContent: msg.Body,
 	}
 
 	jsonData, err := json.Marshal(requestPayload)
