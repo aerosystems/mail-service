@@ -18,6 +18,19 @@ import (
 const webPort = 80
 const rpcPort = 5001
 
+// @title Mail Service
+// @version 1.0.1
+// @description A part of microservice infrastructure, who responsible for sending emails
+
+// @contact.name Artem Kostenko
+// @contact.url https://github.com/aerosystems
+
+// @license.name Apache 2.0
+// @license.url https://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host gw.verifire.com/mail
+// @schemes https
+// @BasePath /
 func main() {
 	log := logger.NewLogger(os.Getenv("HOSTNAME"))
 

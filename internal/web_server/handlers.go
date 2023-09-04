@@ -1,6 +1,7 @@
 package WebServer
 
 import (
+	"errors"
 	"github.com/aerosystems/auth-service/pkg/validators"
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
 	"github.com/labstack/echo/v4"
@@ -20,22 +21,34 @@ type RPCInspectPayload struct {
 	ClientIp string
 }
 
+// SendFeedback godoc
+// @Summary Send feedback
+// @Description Send feedback
+// @Tags feedback
+// @Accept json
+// @Produce json
+// @Param feedbackRequest body FeedbackRequest true "feedback request"
+// @Success 200 {object} Response
+// @Failure 400 {object} ErrResponse
+// @Failure 422 {object} ErrResponse
+// @Failure 500 {object} ErrResponse
+// @Router /v1/feedback [post]
 func (app *Config) SendFeedback(c echo.Context) error {
 	var feedbackRequest FeedbackRequest
 	if err := c.Bind(&feedbackRequest); err != nil {
-		return echo.NewHTTPError(http.StatusUnprocessableEntity, "invalid request body")
+		return ErrorResponse(c, http.StatusUnprocessableEntity, "invalid request body", err)
 	}
 
 	if feedbackRequest.Name == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "name is required")
+		return ErrorResponse(c, http.StatusBadRequest, "name is required", nil)
 	}
 
 	if feedbackRequest.Email == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "email is required")
+		return ErrorResponse(c, http.StatusBadRequest, "email is required", nil)
 	}
 
 	if feedbackRequest.Message == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "message is required")
+		return ErrorResponse(c, http.StatusBadRequest, "message is required", nil)
 	}
 
 	// checking email in blacklist via RPC
@@ -48,11 +61,12 @@ func (app *Config) SendFeedback(c echo.Context) error {
 				ClientIp: c.RealIP(),
 			},
 			&result); err != nil {
-			return echo.NewHTTPError(http.StatusBadRequest, "email address does not valid")
+			return ErrorResponse(c, http.StatusBadRequest, "email address does not valid", err)
 		}
 
 		if result == "blacklist" {
-			return echo.NewHTTPError(http.StatusBadRequest, "email address contains in blacklist")
+			err := errors.New("email address is blacklisted")
+			return ErrorResponse(c, http.StatusBadRequest, err.Error(), err)
 		}
 	} else {
 		app.log.Error(err)
@@ -74,8 +88,8 @@ func (app *Config) SendFeedback(c echo.Context) error {
 	}
 
 	if err := app.mailService.SendEmail(msg); err != nil {
-		return echo.NewHTTPError(http.StatusInternalServerError, "error sending email")
+		return ErrorResponse(c, http.StatusInternalServerError, "error sending feedback", err)
 	}
 
-	return c.JSON(http.StatusOK, "feedback sent successfully")
+	return SuccessResponse(c, http.StatusOK, "feedback sent successfully", nil)
 }
