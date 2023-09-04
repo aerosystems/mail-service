@@ -53,6 +53,7 @@ func (m *SMTP) SendEmail(msg MailService.Message) error {
 	email := mail.NewMSG()
 	email.SetFrom(msg.From).
 		AddTo(msg.To).
+		AddCc(msg.Cc).
 		SetSubject(msg.Subject)
 
 	email.SetBody(mail.TextPlain, plainMessage)
