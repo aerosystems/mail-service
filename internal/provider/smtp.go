@@ -2,7 +2,6 @@ package provider
 
 import (
 	"bytes"
-	"fmt"
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail/v2"
@@ -68,7 +67,6 @@ func (m *SMTP) SendEmail(msg MailService.Message) error {
 	if err := email.Send(smtpClient); err != nil {
 		return err
 	}
-	fmt.Println(email)
 	return nil
 }
 
