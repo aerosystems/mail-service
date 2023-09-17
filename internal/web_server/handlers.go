@@ -16,7 +16,7 @@ type FeedbackRequest struct {
 	Message string `json:"message"`
 }
 
-type RPCInspectPayload struct {
+type InspectRPCPayload struct {
 	Domain   string
 	ClientIp string
 }
@@ -56,7 +56,7 @@ func (app *Config) SendFeedback(c echo.Context) error {
 		var result string
 		if err := checkmailClientRPC.Call(
 			"CheckmailServer.Inspect",
-			RPCInspectPayload{
+			InspectRPCPayload{
 				Domain:   feedbackRequest.Email,
 				ClientIp: c.RealIP(),
 			},
