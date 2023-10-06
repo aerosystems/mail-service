@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
+	"time"
 )
 
 type logger struct{ *logrus.Logger }
