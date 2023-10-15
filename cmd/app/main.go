@@ -57,7 +57,7 @@ func main() {
 		log.Fatal("no email provider set")
 	}
 
-	mailServer := RPCServer.New(rpcPort, log.Logger, mailService)
+	rpcServer := RPCServer.New(rpcPort, log.Logger, mailService)
 	webServer := WebServer.New(log.Logger, mailService)
 
 	e := webServer.NewRouter()
@@ -79,8 +79,8 @@ func main() {
 
 	go func() {
 		log.Infof("starting mail-service RPC server on port %d\n", rpcPort)
-		errChan <- rpc.Register(mailServer)
-		errChan <- mailServer.Listen(rpcPort)
+		errChan <- rpc.Register(rpcServer)
+		errChan <- rpcServer.Listen(rpcPort)
 	}()
 
 	go func() {
