@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-type MailPayload struct {
+type MailRPCPayload struct {
 	To      string
 	Subject string
 	Body    string
 }
 
-func (ms *MailServer) SendEmail(payload MailPayload, resp *string) error {
+func (ms *MailServer) SendEmail(payload MailRPCPayload, resp *string) error {
 	ms.log.Infof("sending email to %s", payload.To)
 
 	msg := MailService.Message{
