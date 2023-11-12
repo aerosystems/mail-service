@@ -2,8 +2,8 @@ package WebServer
 
 import (
 	"errors"
-	"github.com/aerosystems/auth-service/pkg/validators"
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	"github.com/aerosystems/mail-service/pkg/validators"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/rpc"
