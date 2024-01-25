@@ -28,7 +28,7 @@ const rpcPort = 5001
 // @license.name Apache 2.0
 // @license.url https://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host gw.verifire.com/mail
+// @host gw.verifire.app/mail
 // @schemes https
 // @BasePath /
 func main() {
