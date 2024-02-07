@@ -79,9 +79,9 @@ func (app *Config) SendFeedback(c echo.Context) error {
 
 	msg := MailService.Message{
 		To:       feedbackEmail,
-		ToName:   "Testmail💎",
+		ToName:   "Verifire💎",
 		FromName: feedbackRequest.Name,
-		From:     "no-reply@testmail.top",
+		From:     "no-reply@verifire.dev",
 		Cc:       feedbackRequest.Email,
 		Subject:  "Feedback from " + feedbackRequest.Email,
 		Body:     feedbackRequest.Message,

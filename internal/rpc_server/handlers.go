@@ -17,8 +17,8 @@ func (ms *MailServer) SendEmail(payload MailRPCPayload, resp *string) error {
 	msg := MailService.Message{
 		To:       payload.To,
 		ToName:   "Customer",
-		FromName: "Testmail💎",
-		From:     "no-reply@testmail.top",
+		FromName: "Verifire💎",
+		From:     "no-reply@verifire.dev",
 		Subject:  payload.Subject,
 		Body:     payload.Body,
 	}
