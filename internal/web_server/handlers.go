@@ -55,7 +55,7 @@ func (app *Config) SendFeedback(c echo.Context) error {
 	if checkmailClientRPC, err := rpc.Dial("tcp", "checkmail-service:5001"); err == nil {
 		var result string
 		if err := checkmailClientRPC.Call(
-			"CheckmailServer.Inspect",
+			"Server.Inspect",
 			InspectRPCPayload{
 				Domain:   feedbackRequest.Email,
 				ClientIp: c.RealIP(),
