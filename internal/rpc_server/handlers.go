@@ -1,4 +1,4 @@
-package RPCServer
+package RpcServer
 
 import (
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/aerosystems/mail-service/internal/provider"
-	RPCServer "github.com/aerosystems/mail-service/internal/rpc_server"
+	RpcServer "github.com/aerosystems/mail-service/internal/rpc_server"
 	WebServer "github.com/aerosystems/mail-service/internal/web_server"
 	"github.com/aerosystems/mail-service/pkg/logger"
 	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
@@ -57,7 +57,7 @@ func main() {
 		log.Fatal("no email provider set")
 	}
 
-	rpcServer := RPCServer.New(rpcPort, log.Logger, mailService)
+	rpcServer := RpcServer.New(rpcPort, log.Logger, mailService)
 	webServer := WebServer.New(log.Logger, mailService)
 
 	e := webServer.NewRouter()
