@@ -1,6 +1,6 @@
 module github.com/aerosystems/mail-service
 
-go 1.19
+go 1.22
 
 require (
 	github.com/aerosystems/auth-service v1.0.7
