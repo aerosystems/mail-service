@@ -1,7 +1,7 @@
 package RpcServer
 
 import (
-	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"os"
 )
 

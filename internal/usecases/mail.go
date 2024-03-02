@@ -1,4 +1,4 @@
-package EmailService
+package MailService
 
 type MailService struct {
 	Provider EmailProvider

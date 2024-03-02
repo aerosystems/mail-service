@@ -2,7 +2,7 @@ package provider
 
 import (
 	"bytes"
-	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail/v2"
 	"html/template"

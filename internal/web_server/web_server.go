@@ -1,7 +1,7 @@
 package WebServer
 
 import (
-	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"os"

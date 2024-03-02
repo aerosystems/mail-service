@@ -3,7 +3,7 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
-	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"net/http"
 	"os"
 )

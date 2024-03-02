@@ -2,7 +2,7 @@ package RpcServer
 
 import (
 	"fmt"
-	MailService "github.com/aerosystems/mail-service/pkg/mail_service"
+	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/rpc"
