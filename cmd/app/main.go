@@ -1,22 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"github.com/aerosystems/mail-service/internal/provider"
-	RpcServer "github.com/aerosystems/mail-service/internal/rpc_server"
-	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
-	WebServer "github.com/aerosystems/mail-service/internal/web_server"
-	"github.com/aerosystems/mail-service/pkg/logger"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/sirupsen/logrus"
-	"net/rpc"
-	"os"
-	"strconv"
+	"context"
+	"golang.org/x/sync/errgroup"
 )
-
-const webPort = 80
-const rpcPort = 5001
 
 // @title Mail Service
 // @version 1.0.1
@@ -32,68 +19,26 @@ const rpcPort = 5001
 // @schemes https
 // @BasePath /
 func main() {
-	log := logger.NewLogger(os.Getenv("HOSTNAME"))
+	app := InitApp()
 
-	mailService := &MailService.MailService{}
-	switch os.Getenv("EMAIL_PROVIDER") {
-	case "mailhog":
-		port, err := strconv.Atoi(os.Getenv("MAILHOG_PORT"))
-		if err != nil {
-			log.Fatal(err)
-		}
-		mailService.SetProvider(&provider.SMTP{
-			Domain:     os.Getenv("MAILHOG_DOMAIN"),
-			Host:       os.Getenv("MAILHOG_HOST"),
-			Port:       port,
-			Username:   os.Getenv("MAILHOG_USERNAME"),
-			Password:   os.Getenv("MAILHOG_PASSWORD"),
-			Encryption: os.Getenv("MAILHOG_ENCRYPTION"),
-		})
-	case "brevo":
-		mailService.SetProvider(&provider.Brevo{})
-	case "postfix":
-		mailService.SetProvider(&provider.SMTP{})
-	default:
-		log.Fatal("no email provider set")
-	}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	rpcServer := RpcServer.New(rpcPort, log.Logger, mailService)
-	webServer := WebServer.New(log.Logger, mailService)
+	group, ctx := errgroup.WithContext(ctx)
 
-	e := webServer.NewRouter()
-	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogURI:    true,
-		LogStatus: true,
-		LogValuesFunc: func(c echo.Context, values middleware.RequestLoggerValues) error {
-			log.WithFields(logrus.Fields{
-				"URI":    values.URI,
-				"status": values.Status,
-			}).Info("request")
-			return nil
-		},
-	}))
+	group.Go(func() error {
+		return app.httpServer.Run()
+	})
 
-	e.Use(middleware.Recover())
+	group.Go(func() error {
+		return app.rpcServer.Run()
+	})
 
-	errChan := make(chan error)
+	group.Go(func() error {
+		return app.handleSignals(ctx, cancel)
+	})
 
-	go func() {
-		log.Infof("starting mail-service RPC server on port %d\n", rpcPort)
-		errChan <- rpc.Register(rpcServer)
-		errChan <- rpcServer.Listen(rpcPort)
-	}()
-
-	go func() {
-		log.Infof("starting mail-service HTTP server on port %d\n", webPort)
-		errChan <- e.Start(fmt.Sprintf(":%d", webPort))
-	}()
-
-	for {
-		select {
-		case err := <-errChan:
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
+	if err := group.Wait(); err != nil {
+		app.log.Errorf("error occurred: %v", err)
 	}
 }

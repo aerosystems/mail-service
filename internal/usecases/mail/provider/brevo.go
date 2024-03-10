@@ -3,12 +3,19 @@ package provider
 import (
 	"bytes"
 	"encoding/json"
-	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
+	"github.com/aerosystems/mail-service/internal/models"
 	"net/http"
-	"os"
 )
 
-type Brevo struct{}
+type Brevo struct {
+	Token string
+}
+
+func NewBrevo(token string) *Brevo {
+	return &Brevo{
+		Token: token,
+	}
+}
 
 type BrevoRequestPayload struct {
 	Sender      BrevoMailPerson   `json:"sender"`
@@ -22,7 +29,7 @@ type BrevoMailPerson struct {
 	Email string `json:"email"`
 }
 
-func (b *Brevo) SendEmail(msg MailService.Message) error {
+func (b Brevo) SendEmail(msg models.Message) error {
 	requestPayload := &BrevoRequestPayload{
 		Sender: BrevoMailPerson{
 			Name:  msg.FromName,
@@ -51,7 +58,7 @@ func (b *Brevo) SendEmail(msg MailService.Message) error {
 
 	req.Header.Add("accept", "application/json")
 	req.Header.Add("content-type", "application/json")
-	req.Header.Add("api-key", os.Getenv("BREVO_API_KEY"))
+	req.Header.Add("api-key", b.Token)
 
 	res, err := client.Do(req)
 	if err != nil {
@@ -62,8 +69,6 @@ func (b *Brevo) SendEmail(msg MailService.Message) error {
 	if res.StatusCode != http.StatusCreated {
 		return err
 	}
-
-	// TODO: add logging
 
 	return nil
 }

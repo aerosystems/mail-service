@@ -2,31 +2,33 @@ package RpcServer
 
 import (
 	"fmt"
-	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
 	"github.com/sirupsen/logrus"
 	"net"
 	"net/rpc"
 )
 
-type MailServer struct {
-	rpcPort     int
+const rpcPort = 5001
+
+type Server struct {
 	log         *logrus.Logger
-	mailService *MailService.MailService
+	mailService MailService
 }
 
-func New(
-	rpcPort int,
+func NewServer(
 	log *logrus.Logger,
-	mailService *MailService.MailService,
-) *MailServer {
-	return &MailServer{
-		rpcPort:     rpcPort,
+	mailService MailService,
+) *Server {
+	return &Server{
 		log:         log,
 		mailService: mailService,
 	}
 }
 
-func (ms *MailServer) Listen(rpcPort int) error {
+func (s Server) Run() error {
+	if err := rpc.Register(s); err != nil {
+		return err
+	}
+	s.log.Infof("starting checkmail-service RPC server on port %d\n", rpcPort)
 	listen, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", rpcPort))
 	if err != nil {
 		return err

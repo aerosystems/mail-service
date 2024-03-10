@@ -2,14 +2,14 @@ package provider
 
 import (
 	"bytes"
-	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
+	"github.com/aerosystems/mail-service/internal/models"
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail/v2"
 	"html/template"
 	"time"
 )
 
-type SMTP struct {
+type Smtp struct {
 	Domain     string
 	Host       string
 	Port       int
@@ -18,28 +18,39 @@ type SMTP struct {
 	Encryption string
 }
 
-func (m *SMTP) SendEmail(msg MailService.Message) error {
+func NewSmtp(domain, host string, port int, username, password, encryption string) *Smtp {
+	return &Smtp{
+		Domain:     domain,
+		Host:       host,
+		Port:       port,
+		Username:   username,
+		Password:   password,
+		Encryption: encryption,
+	}
+}
+
+func (s Smtp) SendEmail(msg models.Message) error {
 	data := map[string]any{
 		"message": msg.Body,
 	}
 	msg.DataMap = data
 
-	formattedMessage, err := m.buildHTMLMessage(msg)
+	formattedMessage, err := s.buildHtmlMessage(msg)
 	if err != nil {
 		return err
 	}
 
-	plainMessage, err := m.buildPlainTextMessage(msg)
+	plainMessage, err := s.buildPlainTextMessage(msg)
 	if err != nil {
 		return err
 	}
 
 	server := mail.NewSMTPClient()
-	server.Host = m.Host
-	server.Port = m.Port
-	server.Username = m.Username
-	server.Password = m.Password
-	server.Encryption = m.getEncryption(m.Encryption)
+	server.Host = s.Host
+	server.Port = s.Port
+	server.Username = s.Username
+	server.Password = s.Password
+	server.Encryption = s.getEncryption(s.Encryption)
 	server.KeepAlive = false
 	server.ConnectTimeout = 10 * time.Second
 	server.SendTimeout = 10 * time.Second
@@ -70,7 +81,7 @@ func (m *SMTP) SendEmail(msg MailService.Message) error {
 	return nil
 }
 
-func (m *SMTP) buildHTMLMessage(msg MailService.Message) (string, error) {
+func (s Smtp) buildHtmlMessage(msg models.Message) (string, error) {
 	templateToRender := "./templates/mail.html.gohtml"
 
 	t, err := template.New("email-html").ParseFiles(templateToRender)
@@ -84,7 +95,7 @@ func (m *SMTP) buildHTMLMessage(msg MailService.Message) (string, error) {
 	}
 
 	formattedMessage := tpl.String()
-	formattedMessage, err = m.inlineCSS(formattedMessage)
+	formattedMessage, err = s.inlineCSS(formattedMessage)
 	if err != nil {
 		return "", err
 	}
@@ -92,7 +103,7 @@ func (m *SMTP) buildHTMLMessage(msg MailService.Message) (string, error) {
 	return formattedMessage, nil
 }
 
-func (m *SMTP) buildPlainTextMessage(msg MailService.Message) (string, error) {
+func (s Smtp) buildPlainTextMessage(msg models.Message) (string, error) {
 	templateToRender := "./templates/mail.plain.gohtml"
 
 	t, err := template.New("email-plain").ParseFiles(templateToRender)
@@ -110,14 +121,14 @@ func (m *SMTP) buildPlainTextMessage(msg MailService.Message) (string, error) {
 	return plainMessage, nil
 }
 
-func (m *SMTP) inlineCSS(s string) (string, error) {
+func (s Smtp) inlineCSS(str string) (string, error) {
 	options := premailer.Options{
 		RemoveClasses:     false,
 		CssToAttributes:   false,
 		KeepBangImportant: true,
 	}
 
-	prem, err := premailer.NewPremailerFromString(s, &options)
+	prem, err := premailer.NewPremailerFromString(str, &options)
 	if err != nil {
 		return "", err
 	}
@@ -130,8 +141,8 @@ func (m *SMTP) inlineCSS(s string) (string, error) {
 	return html, nil
 }
 
-func (m *SMTP) getEncryption(s string) mail.Encryption {
-	switch s {
+func (s Smtp) getEncryption(str string) mail.Encryption {
+	switch str {
 	case "tls":
 		return mail.EncryptionSTARTTLS
 	case "ssl":

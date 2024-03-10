@@ -7,13 +7,16 @@ import (
 )
 
 type Config struct {
+	Mode              string `mapstructure:"MODE"`
 	EmailProvider     string `mapstructure:"EMAIL_PROVIDER"`
-	MailHogPort       int    `mapstructure:"MAILHOG_PORT"`
-	MailHogDomain     string `mapstructure:"MAILHOG_DOMAIN"`
-	MailHogDHost      string `mapstructure:"MAILHOG_HOST"`
-	MailHogUsername   string `mapstructure:"MAILHOG_USERNAME"`
-	MailHogPassword   string `mapstructure:"MAILHOG_PASSWORD"`
-	MailHogEncryption string `mapstructure:"MAILHOG_ENCRYPTION"`
+	MailhogPort       int    `mapstructure:"MAILHOG_PORT"`
+	MailhogDomain     string `mapstructure:"MAILHOG_DOMAIN"`
+	MailhogHost       string `mapstructure:"MAILHOG_HOST"`
+	MailhogUsername   string `mapstructure:"MAILHOG_USERNAME"`
+	MailhogPassword   string `mapstructure:"MAILHOG_PASSWORD"`
+	MailhogEncryption string `mapstructure:"MAILHOG_ENCRYPTION"`
+	BrevoApiKey       string `mapstructure:"BREVO_API_KEY"`
+	FeedBackEmail     string `mapstructure:"FEEDBACK_EMAIL"`
 }
 
 func NewConfig() *Config {

@@ -1,14 +1,27 @@
-package WebServer
+package rest
 
 import (
 	"errors"
-	MailService "github.com/aerosystems/mail-service/internal/usecases/mail"
-	"github.com/aerosystems/mail-service/pkg/validators"
+	"github.com/aerosystems/mail-service/internal/models"
+	"github.com/aerosystems/mail-service/internal/validators"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"net/rpc"
 	"os"
 )
+
+type FeedbackHandler struct {
+	*BaseHandler
+	mailService MailService
+}
+
+func NewFeedbackHandler(baseHandler *BaseHandler, mailService MailService) *FeedbackHandler {
+	return &FeedbackHandler{
+		BaseHandler: baseHandler,
+		mailService: mailService,
+	}
+
+}
 
 type FeedbackRequest struct {
 	Name    string `json:"name"`
@@ -33,22 +46,22 @@ type InspectRPCPayload struct {
 // @Failure 422 {object} ErrResponse
 // @Failure 500 {object} ErrResponse
 // @Router /v1/feedback [post]
-func (app *Config) SendFeedback(c echo.Context) error {
+func (fh FeedbackHandler) SendFeedback(c echo.Context) error {
 	var feedbackRequest FeedbackRequest
 	if err := c.Bind(&feedbackRequest); err != nil {
-		return ErrorResponse(c, http.StatusUnprocessableEntity, "invalid request body", err)
+		return fh.ErrorResponse(c, http.StatusUnprocessableEntity, "invalid request body", err)
 	}
 
 	if feedbackRequest.Name == "" {
-		return ErrorResponse(c, http.StatusBadRequest, "name is required", nil)
+		return fh.ErrorResponse(c, http.StatusBadRequest, "name is required", nil)
 	}
 
 	if feedbackRequest.Email == "" {
-		return ErrorResponse(c, http.StatusBadRequest, "email is required", nil)
+		return fh.ErrorResponse(c, http.StatusBadRequest, "email is required", nil)
 	}
 
 	if feedbackRequest.Message == "" {
-		return ErrorResponse(c, http.StatusBadRequest, "message is required", nil)
+		return fh.ErrorResponse(c, http.StatusBadRequest, "message is required", nil)
 	}
 
 	// checking email in blacklist via RPC
@@ -61,15 +74,15 @@ func (app *Config) SendFeedback(c echo.Context) error {
 				ClientIp: c.RealIP(),
 			},
 			&result); err != nil {
-			return ErrorResponse(c, http.StatusBadRequest, "email address does not valid", err)
+			return fh.ErrorResponse(c, http.StatusBadRequest, "email address does not valid", err)
 		}
 
 		if result == "blacklist" {
 			err := errors.New("email address is blacklisted")
-			return ErrorResponse(c, http.StatusBadRequest, err.Error(), err)
+			return fh.ErrorResponse(c, http.StatusBadRequest, err.Error(), err)
 		}
 	} else {
-		app.log.Error(err)
+		fh.log.Error(err)
 	}
 
 	feedbackEmail, err := validators.ValidateEmail(os.Getenv("FEEDBACK_EMAIL"))
@@ -77,7 +90,7 @@ func (app *Config) SendFeedback(c echo.Context) error {
 		panic(err)
 	}
 
-	msg := MailService.Message{
+	msg := models.Message{
 		To:       feedbackEmail,
 		ToName:   "Verifire💎",
 		FromName: feedbackRequest.Name,
@@ -87,9 +100,9 @@ func (app *Config) SendFeedback(c echo.Context) error {
 		Body:     feedbackRequest.Message,
 	}
 
-	if err := app.mailService.SendEmail(msg); err != nil {
-		return ErrorResponse(c, http.StatusInternalServerError, "error sending feedback", err)
+	if err := fh.mailService.SendEmail(msg); err != nil {
+		return fh.ErrorResponse(c, http.StatusInternalServerError, "error sending feedback", err)
 	}
 
-	return SuccessResponse(c, http.StatusOK, "feedback sent successfully", nil)
+	return fh.SuccessResponse(c, http.StatusOK, "feedback sent successfully", nil)
 }
