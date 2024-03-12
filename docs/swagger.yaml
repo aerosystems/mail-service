@@ -1,14 +1,14 @@
 basePath: /
 definitions:
-  WebServer.ErrResponse:
+  rest.ErrorResponse:
     properties:
       code:
         type: integer
-      data: {}
+      error: {}
       message:
         type: string
     type: object
-  WebServer.FeedbackRequest:
+  rest.FeedbackRequest:
     properties:
       email:
         type: string
@@ -17,13 +17,13 @@ definitions:
       name:
         type: string
     type: object
-  WebServer.Response:
+  rest.Response:
     properties:
       data: {}
       message:
         type: string
     type: object
-host: gw.verifire.com/mail
+host: gw.verifire.dev/mail
 info:
   contact:
     name: Artem Kostenko
@@ -47,26 +47,26 @@ paths:
         name: feedbackRequest
         required: true
         schema:
-          $ref: '#/definitions/WebServer.FeedbackRequest'
+          $ref: '#/definitions/rest.FeedbackRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/WebServer.Response'
+            $ref: '#/definitions/rest.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/WebServer.ErrResponse'
+            $ref: '#/definitions/rest.ErrorResponse'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/WebServer.ErrResponse'
+            $ref: '#/definitions/rest.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/WebServer.ErrResponse'
+            $ref: '#/definitions/rest.ErrorResponse'
       summary: Send feedback
       tags:
       - feedback

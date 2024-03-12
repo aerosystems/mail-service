@@ -42,9 +42,9 @@ type InspectRPCPayload struct {
 // @Produce json
 // @Param feedbackRequest body FeedbackRequest true "feedback request"
 // @Success 200 {object} Response
-// @Failure 400 {object} ErrResponse
-// @Failure 422 {object} ErrResponse
-// @Failure 500 {object} ErrResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 422 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
 // @Router /v1/feedback [post]
 func (fh FeedbackHandler) SendFeedback(c echo.Context) error {
 	var feedbackRequest FeedbackRequest

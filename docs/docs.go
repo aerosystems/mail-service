@@ -42,7 +42,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/WebServer.FeedbackRequest"
+                            "$ref": "#/definitions/rest.FeedbackRequest"
                         }
                     }
                 ],
@@ -50,25 +50,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/WebServer.Response"
+                            "$ref": "#/definitions/rest.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/WebServer.ErrResponse"
+                            "$ref": "#/definitions/rest.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/WebServer.ErrResponse"
+                            "$ref": "#/definitions/rest.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/WebServer.ErrResponse"
+                            "$ref": "#/definitions/rest.ErrorResponse"
                         }
                     }
                 }
@@ -76,19 +76,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "WebServer.ErrResponse": {
+        "rest.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
                     "type": "integer"
                 },
-                "data": {},
+                "error": {},
                 "message": {
                     "type": "string"
                 }
             }
         },
-        "WebServer.FeedbackRequest": {
+        "rest.FeedbackRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -102,7 +102,7 @@ const docTemplate = `{
                 }
             }
         },
-        "WebServer.Response": {
+        "rest.Response": {
             "type": "object",
             "properties": {
                 "data": {},
