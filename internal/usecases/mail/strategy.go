@@ -1,6 +1,9 @@
 package mail
 
-import "github.com/aerosystems/mail-service/internal/models"
+import (
+	"fmt"
+	"github.com/aerosystems/mail-service/internal/models"
+)
 
 type EmailProvider interface {
 	SendEmail(msg models.Message) error
@@ -20,6 +23,7 @@ func (e EmailService) SetProvider(provider EmailProvider) {
 	e.Provider = provider
 }
 
-func (e EmailService) SendEmail(msg models.Message) error {
+func (e EmailService) Send(msg models.Message) error {
+	fmt.Print(e.Provider)
 	return e.Provider.SendEmail(msg)
 }

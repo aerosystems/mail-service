@@ -100,7 +100,7 @@ func (fh FeedbackHandler) SendFeedback(c echo.Context) error {
 		Body:     feedbackRequest.Message,
 	}
 
-	if err := fh.mailService.SendEmail(msg); err != nil {
+	if err := fh.mailService.Send(msg); err != nil {
 		return fh.ErrorResponse(c, http.StatusInternalServerError, "error sending feedback", err)
 	}
 

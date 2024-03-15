@@ -2,7 +2,6 @@ package RpcServer
 
 import (
 	"github.com/aerosystems/mail-service/internal/models"
-	"os"
 )
 
 type MailRPCPayload struct {
@@ -23,8 +22,7 @@ func (s Server) SendEmail(payload MailRPCPayload, resp *string) error {
 		Body:     payload.Body,
 	}
 
-	s.log.Infof("sending email with %s provider", os.Getenv("EMAIL_PROVIDER"))
-	if err := s.mailService.SendEmail(msg); err != nil {
+	if err := s.mailService.Send(msg); err != nil {
 		s.log.Errorf("error sending email: %v", err)
 		return err
 	}
