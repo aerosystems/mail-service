@@ -5,8 +5,8 @@ package main
 
 import (
 	"github.com/aerosystems/mail-service/internal/config"
-	HttpServer "github.com/aerosystems/mail-service/internal/http"
-	"github.com/aerosystems/mail-service/internal/infrastructure/rest"
+	HttpServer "github.com/aerosystems/mail-service/internal/infrastructure/http"
+	"github.com/aerosystems/mail-service/internal/infrastructure/http/handlers"
 	RpcServer "github.com/aerosystems/mail-service/internal/infrastructure/rpc"
 	"github.com/aerosystems/mail-service/internal/usecases/mail"
 	"github.com/aerosystems/mail-service/internal/usecases/mail/provider"
@@ -18,7 +18,7 @@ import (
 //go:generate wire
 func InitApp() *App {
 	panic(wire.Build(
-		wire.Bind(new(rest.MailService), new(*mail.EmailService)),
+		wire.Bind(new(handlers.MailService), new(*mail.EmailService)),
 		wire.Bind(new(RpcServer.MailService), new(*mail.EmailService)),
 		ProvideApp,
 		ProvideLogger,
@@ -46,7 +46,7 @@ func ProvideConfig() *config.Config {
 	panic(wire.Build(config.NewConfig))
 }
 
-func ProvideHttpServer(log *logrus.Logger, cfg *config.Config, feedbackHandler *rest.FeedbackHandler) *HttpServer.Server {
+func ProvideHttpServer(log *logrus.Logger, cfg *config.Config, feedbackHandler *handlers.FeedbackHandler) *HttpServer.Server {
 	panic(wire.Build(HttpServer.NewServer))
 }
 
@@ -58,12 +58,12 @@ func ProvideLogrusLogger(log *logger.Logger) *logrus.Logger {
 	return log.Logger
 }
 
-func ProvideBaseHandler(log *logrus.Logger, cfg *config.Config) *rest.BaseHandler {
-	return rest.NewBaseHandler(log, cfg.Mode)
+func ProvideBaseHandler(log *logrus.Logger, cfg *config.Config) *handlers.BaseHandler {
+	return handlers.NewBaseHandler(log, cfg.Mode)
 }
 
-func ProvideFeedbackHandler(baseHandler *rest.BaseHandler, mailService rest.MailService) *rest.FeedbackHandler {
-	return rest.NewFeedbackHandler(baseHandler, mailService)
+func ProvideFeedbackHandler(baseHandler *handlers.BaseHandler, mailService handlers.MailService) *handlers.FeedbackHandler {
+	return handlers.NewFeedbackHandler(baseHandler, mailService)
 }
 
 func ProvideMailhogProvider(cfg *config.Config) *provider.Smtp {
