@@ -1,8 +1,6 @@
 package RpcServer
 
-import (
-	"github.com/aerosystems/mail-service/internal/models"
-)
+import "github.com/aerosystems/mail-service/internal/models"
 
 type MailRPCPayload struct {
 	To      string

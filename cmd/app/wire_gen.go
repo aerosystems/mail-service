@@ -7,7 +7,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/aerosystems/mail-service/internal/config"
 	"github.com/aerosystems/mail-service/internal/http"
 	"github.com/aerosystems/mail-service/internal/infrastructure/rest"
@@ -92,7 +91,6 @@ func ProvideBrevoProvider(cfg *config.Config) *provider.Brevo {
 
 func ProvideMailService(cfg *config.Config, brevo *provider.Brevo, mailhog *provider.Smtp) *mail.EmailService {
 	provider2, err := mail.FromString(cfg.EmailProvider)
-	fmt.Printf("provider: %v\n", provider2)
 	if err != nil {
 		panic(err)
 	}
