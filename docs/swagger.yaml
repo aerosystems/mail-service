@@ -1,6 +1,6 @@
 basePath: /
 definitions:
-  rest.ErrorResponse:
+  handlers.ErrorResponse:
     properties:
       code:
         type: integer
@@ -8,7 +8,7 @@ definitions:
       message:
         type: string
     type: object
-  rest.FeedbackRequest:
+  handlers.FeedbackRequest:
     properties:
       email:
         type: string
@@ -17,7 +17,7 @@ definitions:
       name:
         type: string
     type: object
-  rest.Response:
+  handlers.Response:
     properties:
       data: {}
       message:
@@ -47,26 +47,26 @@ paths:
         name: feedbackRequest
         required: true
         schema:
-          $ref: '#/definitions/rest.FeedbackRequest'
+          $ref: '#/definitions/handlers.FeedbackRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.Response'
+            $ref: '#/definitions/handlers.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/rest.ErrorResponse'
+            $ref: '#/definitions/handlers.ErrorResponse'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.ErrorResponse'
+            $ref: '#/definitions/handlers.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/rest.ErrorResponse'
+            $ref: '#/definitions/handlers.ErrorResponse'
       summary: Send feedback
       tags:
       - feedback

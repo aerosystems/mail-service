@@ -42,7 +42,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/rest.FeedbackRequest"
+                            "$ref": "#/definitions/handlers.FeedbackRequest"
                         }
                     }
                 ],
@@ -50,25 +50,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.Response"
+                            "$ref": "#/definitions/handlers.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/rest.ErrorResponse"
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.ErrorResponse"
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/rest.ErrorResponse"
+                            "$ref": "#/definitions/handlers.ErrorResponse"
                         }
                     }
                 }
@@ -76,7 +76,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "rest.ErrorResponse": {
+        "handlers.ErrorResponse": {
             "type": "object",
             "properties": {
                 "code": {
@@ -88,7 +88,7 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.FeedbackRequest": {
+        "handlers.FeedbackRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -102,7 +102,7 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.Response": {
+        "handlers.Response": {
             "type": "object",
             "properties": {
                 "data": {},
